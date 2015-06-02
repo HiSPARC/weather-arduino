@@ -9,7 +9,7 @@ Weather with Arduino
 Weather with arduino is a data acquisition system for an Arduino based
 weather station. It is designed for use in the HiSPARC experiment.
 
-For introductory material (in Dutch) see: 
-[Weerstation met Arduino](http://docs.hisparc.nl/infopakket/pdf/arduino_weerstation.pdf)
-and
-[Wireless connectie PC en Arduino](http://docs.hisparc.nl/infopakket/pdf/arduino_wireless.pdf)
+For introductory material (in Dutch) see:
+
+- [Weerstation met Arduino](http://docs.hisparc.nl/infopakket/pdf/arduino_weerstation.pdf)
+- [Wireless connectie PC en Arduino](http://docs.hisparc.nl/infopakket/pdf/arduino_wireless.pdf)
