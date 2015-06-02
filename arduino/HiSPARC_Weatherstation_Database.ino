@@ -1,4 +1,3 @@
-
 // This sketch is for testing Weather station to Database HiSPARC
 
 #include <OneWire.h>  // to use data from ultiple sensors send through one wire
@@ -25,12 +24,11 @@ DallasTemperature tsensors(&oneWire);
 
 BMP085 dps = BMP085();      // Digital Pressure Sensor -> dps is accessing library 
 
-//needed for library of BMP085
+// Needed for library of BMP085
 long Temperature = 0, Pressure = 0, Altitude = 1000; 
 
 
-void setup(void)
-{
+void setup(void) {
   // start serial port
   Serial.begin(9600);
   //Serial.println("HiSPARC Weather station measuring:");
@@ -45,14 +43,15 @@ void setup(void)
            
   tsensors.begin();
 }
- 
-void loop(void){
+
+
+void loop(void) {
   // DTH22 Reading temperature or humidity takes about 250 milliseconds!
   // DTH22 Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
   delay(dht.getMinimumSamplingPeriod());
   
-  tsensors.requestTemperatures(); //Get temperature of detectors (one is default)
-   for  (int deviceA = 0; deviceA < 1; deviceA++) {
+  tsensors.requestTemperatures(); // Get temperature of detectors (one is default)
+  for (int deviceA = 0; deviceA < 1; deviceA++) {
     printTemp(deviceA);
   }
   
@@ -65,15 +64,14 @@ void loop(void){
   } 
   
   else {
-  //Serial.print(dht.getStatusString());  // shows the status of the data read from the sensor
-  //Serial.print("\t");
-  Serial.print(temperature, 1); //Temperature outside
-  //Serial.print(",");
-  //Serial.print("-999"); // Fill in when using measuring humidity inside with sensor.
-  Serial.print(",");
-  Serial.print(humidity, 1);
-  Serial.print(",");
-  
+    //Serial.print(dht.getStatusString());  // shows the status of the data read from the sensor
+    //Serial.print("\t");
+    Serial.print(temperature, 1); //Temperature outside
+    //Serial.print(",");
+    //Serial.print("-999"); // Fill in when using measuring humidity inside with sensor.
+    Serial.print(",");
+    Serial.print(humidity, 1);
+    Serial.print(",");
   }
   
   dps.getTemperature(&Temperature);
@@ -84,11 +82,11 @@ void loop(void){
 
   Serial.println();
   
- delay(2000);
+  delay(2000);
 }
 
+
 void printTemp(int adress) { 
-  
   float TempC = tsensors.getTempCByIndex(adress);
   String stringone = "Detector ";
   stringone += adress;

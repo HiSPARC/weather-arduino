@@ -39,8 +39,8 @@ DallasTemperature tsensors(&oneWire);
 // Setup BMP085 library
 Adafruit_BMP085 bmp;
 
-void setup(void)
-{
+
+void setup(void) {
   // start serial port
   Serial.begin(9600);
   Serial.println("HiSPARC Weather station measuring:");
@@ -48,17 +48,17 @@ void setup(void)
   // if you want to add safety or check for sensor!
   // inlcude this line: Change !bmp.begin() to !sensors.begin() or !dht.begin() to check the other sensors
   //if (!bmp.begin()) {
-	//Serial.println("Could not find a valid BMP085 sensor, check wiring!");
+  //  Serial.println("Could not find a valid BMP085 sensor, check wiring!");}
   
   // WithoutStart up the libraries
   tsensors.begin();
   dht.begin();
   bmp.begin();
 }
- 
+
+
 // 12 mei change to send using wireless
-void loop(void)
-{
+void loop(void) {
   // DTH22 Reading temperature or humidity takes about 250 milliseconds!
   // DTH22 Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
   float h = dht.readHumidity();
@@ -77,30 +77,28 @@ void loop(void)
   }
   
   //BMP085 pressure sensor
-    Serial.print("Temperature = ");
-    Serial.print(bmp.readTemperature());
-    Serial.println(" *C");
-    
-    Serial.print("Pressure = ");
-    Serial.print(bmp.readPressure());
-    Serial.println(" Pa");
-    
-    // Calculate altitude assuming 'standard' barometric
-    // pressure of 1013.25 millibar = 101325 Pascal
-    Serial.print("Altitude = ");
-    Serial.print(bmp.readAltitude());
-    Serial.println(" meters");
+  Serial.print("Temperature = ");
+  Serial.print(bmp.readTemperature());
+  Serial.println(" *C");
+  
+  Serial.print("Pressure = ");
+  Serial.print(bmp.readPressure());
+  Serial.println(" Pa");
+  
+  // Calculate altitude assuming 'standard' barometric
+  // pressure of 1013.25 millibar = 101325 Pascal
+  Serial.print("Altitude = ");
+  Serial.print(bmp.readAltitude());
+  Serial.println(" meters");
 
   // you can get a more precise measurement of altitude
   // if you know the current sea level pressure which will
   // vary with weather and such. If it is 1015 millibars
   // that is equal to 101500 Pascals.
-    Serial.print("Real altitude = ");
-    Serial.print(bmp.readAltitude(101500));
-    Serial.println(" meters");
-    
-  
-  
+  Serial.print("Real altitude = ");
+  Serial.print(bmp.readAltitude(101500));
+  Serial.println(" meters");
+
   // ds18b20 tempsensor code for digital temperature
   // ds18b20 tempsensor request to all devices on the bus
   Serial.print(" Requesting temperatures..."); //remove this when sending data to HiSPARC database.
@@ -117,10 +115,8 @@ void loop(void)
   Serial.print("TempDevice 4 :");
   Serial.println(sensors.getTempCByIndex(3));
    
- delay(1000);
+  delay(1000);
 }
-
-
 
 
 //*************************************************** 
