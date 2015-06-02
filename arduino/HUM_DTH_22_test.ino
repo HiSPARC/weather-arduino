@@ -16,8 +16,8 @@ DHT22 DHT;
 #define DHT21_PIN 5
 #define DHT22_PIN 6
 
-void setup()
-{
+
+void setup() {
   Serial.begin(115200);
   Serial.println("DHT TEST PROGRAM ");
   Serial.print("LIBRARY VERSION: ");
@@ -26,25 +26,24 @@ void setup()
   Serial.println("Type,\tstatus,\tHumidity (%),\tTemperature (C)");
 }
 
-void loop()
-{
+
+void loop() {
   // READ DATA
   Serial.print("DHT22, \t");
   int chk = DHT.read22(DHT22_PIN);
-  switch (chk)
-  {
+  switch (chk) {
     case DHTLIB_OK:  
-		Serial.print("OK,\t"); 
-		break;
+      Serial.print("OK,\t"); 
+      break;
     case DHTLIB_ERROR_CHECKSUM: 
-		Serial.print("Checksum error,\t"); 
-		break;
+      Serial.print("Checksum error,\t"); 
+      break;
     case DHTLIB_ERROR_TIMEOUT: 
-		Serial.print("Time out error,\t"); 
-		break;
+      Serial.print("Time out error,\t"); 
+      break;
     default: 
-		Serial.print("Unknown error,\t"); 
-		break;
+      Serial.print("Unknown error,\t"); 
+      break;
   }
   // DISPLAY DATA
   Serial.print(DHT.humidity, 1);
@@ -53,24 +52,22 @@ void loop()
 
   delay(1000);
 
-
-    // READ DATA
+  // READ DATA
   Serial.print("DHT21, \t");
   chk = DHT.read21(DHT21_PIN);
-  switch (chk)
-  {
+  switch (chk) {
     case DHTLIB_OK:  
-		Serial.print("OK,\t"); 
-		break;
+      Serial.print("OK,\t"); 
+      break;
     case DHTLIB_ERROR_CHECKSUM: 
-		Serial.print("Checksum error,\t"); 
-		break;
+      Serial.print("Checksum error,\t"); 
+      break;
     case DHTLIB_ERROR_TIMEOUT: 
-		Serial.print("Time out error,\t"); 
-		break;
+      Serial.print("Time out error,\t"); 
+      break;
     default: 
-		Serial.print("Unknown error,\t"); 
-		break;
+      Serial.print("Unknown error,\t"); 
+      break;
   }
   // DISPLAY DATA
   Serial.print(DHT.humidity, 1);
@@ -82,26 +79,24 @@ void loop()
   // READ DATA
   Serial.print("DHT11, \t");
   chk = DHT.read11(DHT11_PIN);
-  switch (chk)
-  {
+  switch (chk) {
     case DHTLIB_OK:  
-		Serial.print("OK,\t"); 
-		break;
+      Serial.print("OK,\t"); 
+      break;
     case DHTLIB_ERROR_CHECKSUM: 
-		Serial.print("Checksum error,\t"); 
-		break;
+      Serial.print("Checksum error,\t"); 
+      break;
     case DHTLIB_ERROR_TIMEOUT: 
-		Serial.print("Time out error,\t"); 
-		break;
+      Serial.print("Time out error,\t"); 
+      break;
     default: 
-		Serial.print("Unknown error,\t"); 
-		break;
+      Serial.print("Unknown error,\t"); 
+      break;
   }
- // DISPLAY DATA
+  // DISPLAY DATA
   Serial.print(DHT.humidity,1);
   Serial.print(",\t");
   Serial.println(DHT.temperature,1);
 
   delay(1000);
 }
-//

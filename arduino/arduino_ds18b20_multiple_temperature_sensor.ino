@@ -21,12 +21,11 @@ DallasTemperature sensors(&oneWire);
 // http://www.hacktronics.com/Tutorials/arduino-1-wire-address-finder.html
 // sensor 1 : 0x28, 0x32, 0xB5, 0xBC, 0x05, 0x00, 0x00, 0xB6
 
-DeviceAddress insideThermometer = { 0x28, 0x32, 0xB5, 0xBC, 0x05, 0x00, 0x00, 0xB6};
-DeviceAddress outsideThermometer = { 0x28, 0x9A, 0x34, 0xBE, 0x05, 0x00, 0x00, 0x4 };
-//DeviceAddress dogHouseThermometer = { 0x28, 0x59, 0xBE, 0xDF, 0x02, 0x00, 0x00, 0x9F };
+DeviceAddress insideThermometer = {0x28, 0x32, 0xB5, 0xBC, 0x05, 0x00, 0x00, 0xB6};
+DeviceAddress outsideThermometer = {0x28, 0x9A, 0x34, 0xBE, 0x05, 0x00, 0x00, 0x4};
+//DeviceAddress dogHouseThermometer = {0x28, 0x59, 0xBE, 0xDF, 0x02, 0x00, 0x00, 0x9F};
 
-void setup(void)
-{
+void setup(void) {
   // start serial port
   Serial.begin(9600);
   // Start up the library
@@ -37,8 +36,8 @@ void setup(void)
   //sensors.setResolution(dogHouseThermometer, 10);
 }
 
-void printTemperature(DeviceAddress deviceAddress)
-{
+
+void printTemperature(DeviceAddress deviceAddress) {
   float tempC = sensors.getTempC(deviceAddress);
   if (tempC == -127.00) {
     Serial.print("Error getting temperature");
@@ -50,8 +49,8 @@ void printTemperature(DeviceAddress deviceAddress)
   }
 }
 
-void loop(void)
-{ 
+
+void loop(void) { 
   delay(2000);
   Serial.print("Getting temperatures...\n\r");
   sensors.requestTemperatures();
@@ -66,4 +65,3 @@ void loop(void)
   //printTemperature(dogHouseThermometer);
   Serial.print("\n\r\n\r");
 }
-

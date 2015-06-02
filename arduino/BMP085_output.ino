@@ -8,11 +8,12 @@
 BMP085 dps = BMP085();
 long Temperature = 0, Pressure = 0, Altitude = 0;
 
+
 void setup(void) {
   Serial.begin(9600);
   Wire.begin();
   delay(1000);
-	
+
   dps.init();   
   
   showall();
@@ -41,6 +42,7 @@ void loop(void) {
   Serial.println(Pressure);
 }
 
+
 void showall(void) { 
   Serial.println("Current BMP085 settings");
   Serial.println("==========================================================");
@@ -63,13 +65,14 @@ void showall(void) {
   }  
 }
 
+
 void dumpRegisters() {
   byte ValidRegisterAddr[]={0xAA,0xAB,0xAC,0xAD,0xAE,0xAF,0xB0,0xB1,0xB2,0xB3,0xB4,0xB5,0xB6,0xB7,0xB8,0xB9,0xBA,0xBB,0xBC,0xBD,0xBE,0xBF,0xF6,0xF7,0xF8,0xF9}; 
   byte _b, i, totregisters = sizeof(ValidRegisterAddr);
   Serial.println("---dump start---");
   Serial.println("Register address|Register data");
   Serial.println("Reg.address(hex,dec) Reg.data(bin,hex,dec)");
-  for (i=0;i<totregisters;i++){    
+  for (i=0; i<totregisters; i++) {    
     Serial.print("0x");
     Serial.print(ValidRegisterAddr[i], HEX);
     Serial.print(",");
@@ -86,12 +89,14 @@ void dumpRegisters() {
   Serial.println("---dump end---");
 }
 
-void print_bits(byte val){
+void print_bits(byte val) {
   int i;
   for(i=7; i>=0; i--) 
     Serial.print(val >> i & 1, BIN);
 }
-/* void print_unit16(uint16_t val){
+
+
+/* void print_unit16(uint16_t val) {
   int i;
   for(i=15; i>=0; i--) 
     Serial.print(val >> i & 1, BIN);

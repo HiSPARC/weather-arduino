@@ -12,10 +12,12 @@
 
 OneWire  ds(3);  // Connect your 1-wire device to pin 3
 
+
 void setup(void) {
   Serial.begin(9600);
   discoverOneWireDevices();
 }
+
 
 void discoverOneWireDevices(void) {
   byte i;
@@ -24,7 +26,7 @@ void discoverOneWireDevices(void) {
   byte addr[8];
   
   Serial.print("Looking for 1-Wire devices...\n\r");
-  while(ds.search(addr)) {
+  while (ds.search(addr)) {
     Serial.print("\n\rFound \'1-Wire\' device with address:\n\r");
     for( i = 0; i < 8; i++) {
       Serial.print("0x");
@@ -36,9 +38,9 @@ void discoverOneWireDevices(void) {
         Serial.print(", ");
       }
     }
-    if ( OneWire::crc8( addr, 7) != addr[7]) {
-        Serial.print("CRC is not valid!\n");
-        return;
+    if (OneWire::crc8(addr, 7) != addr[7]) {
+      Serial.print("CRC is not valid!\n");
+      return;
     }
   }
   Serial.print("\n\r\n\rThat's it.\r\n");
@@ -46,9 +48,7 @@ void discoverOneWireDevices(void) {
   return;
 }
 
+
 void loop(void) {
   // nothing to see here
 }
-
-
-

@@ -45,8 +45,8 @@ void setup() {
 float SecFromStart() {
   time = millis();
   int sec = time/1000;
-  int des = (time%1000)/10;
-  float result = (float)sec+((float)des)/100;
+  int des = (time%1000) / 10;
+  float result = (float)sec + ((float)des) / 100;
   return result;
 }
 
@@ -68,7 +68,7 @@ void printdata() {
 
 float BitToVolt(int n) {    //Function to convert raw ADC-data (0-255) to volt
   int raw = analogRead(n);
-  float volt = (float)raw*5.000/1023;
+  float volt = (float)raw * 5.000 / 1023;
   return volt;
 }
 
@@ -99,9 +99,7 @@ void DHTREAD() {
   // check if returns are valid, if they are NaN (not a number) then something went wrong!
   if (isnan(temperature) || isnan(humidity)) {
     Serial.println("Failed to read from DHT");
-  } 
-  
-  else {
+  } else {
     Serial.print(dht.getStatusString());
     Serial.print("\t");
     Serial.print(humidity, 1);
@@ -128,21 +126,21 @@ void ReceiveSerial() {
         LOOPTIME=200;
         break;
       case 'R':
-          counter = 0;
-          break;
+        counter = 0;
+        break;
       case 'V':
-          OutFormatNTC = 0;
-          OutFormatAcc = 0;
-          OutFormatPressure = 0;
-          OutFormatTmp = 0;
-          break;
+        OutFormatNTC = 0;
+        OutFormatAcc = 0;
+        OutFormatPressure = 0;
+        OutFormatTmp = 0;
+        break;
       case 'S':
-          OutFormatNTC = 1;
-          OutFormatAcc = 1;
-          OutFormatPressure = 1;
-          OutFormatTmp = 1;
-          break;
-      }
+        OutFormatNTC = 1;
+        OutFormatAcc = 1;
+        OutFormatPressure = 1;
+        OutFormatTmp = 1;
+        break;
+    }
   }
 }
 
@@ -153,7 +151,8 @@ void loop() {
   ReceiveSerial();  
   counter++;
   loop_end = millis();
-  if (LOOPTIME>(loop_end-loop_start)) {  //Sets the delay to aquire right loop time
-    delay(LOOPTIME-(millis()-loop_start));  
+  if (LOOPTIME > (loop_end - loop_start)) {
+    //Sets the delay to aquire right loop time
+    delay(LOOPTIME - (millis() - loop_start));  
   }
 }
