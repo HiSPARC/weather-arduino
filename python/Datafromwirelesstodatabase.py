@@ -2,12 +2,17 @@ import serial
 import datetime
 import time
 import numpy
+import sys
+import time
 import hashlib
 import requests
 import logging
+import calendar
 
 import cPickle as pickle
 
+from time import sleep
+from pysparc import storage
 from requests.exceptions import ConnectionError, Timeout
 
 logger = logging.getLogger(__name__)
@@ -42,6 +47,8 @@ class Measurement(object):
         # humidityInside, humidityOutside, barometer, windDir, windSpeed,
         # solarRad, UV, ET, rainRate, heatIndex, dewPoint, windChill
 
+        # Extracts variables from output, order of variables is important.
+        # Set the order of variables in the Arduino Program.
         self.temp_inside, self.temp_outside, self.humidity_outside, \
             self.barometer = output
 
@@ -66,12 +73,15 @@ class Measurement(object):
         # Add timetstamp of measurement
         self.datetime = datetime.datetime.now()
         self.nanoseconds = 0
+        self.ext_timestamp = calendar.timegm(self.datetime.utctimetuple()) * 1000000000 + self.nanoseconds
 
     def dampdruk_calc(self, Tout, Hum_out, baro):
         RH = Hum_out / 100  # calculate relative humidity
 
         # calculate vaporpressure, Dewpoint: Formula from Vantage Pro Davis
         # instruments
+        # This document can be found at Github/HiSPARC/weather/doc/_static/
+        #                                               Parameter_Manual.pdf
 
         dampdruk = RH * 6.112 * numpy.exp((17.62 * Tout) / (Tout + 243.12))
         Numerator = 243.12 * numpy.log(dampdruk) - 440.1
@@ -108,7 +118,7 @@ class NikhefDataStore(object):
     def _create_event_container(self, event):
         """Encapsulate an event in a container for the datastore.
         This hurts.  But it is necessary for historical reasons.
-        :param event: HiSPARC event object.
+        :param event: Weather object.
         :returns: container for the event data.
         """
         header = {'eventtype_uploadcode': 'WTR',
@@ -195,27 +205,38 @@ if __name__ == '__main__':
     # Send to NikhefDatastore(Station_id, password) not known please contact
     # info@hisparc.nl
     datastore = NikhefDataStore(599, 'pysparc')
+    storage_manager = storage.StorageManager()
+    storage_manager.add_datastore(datastore, 'queue_nikhef')
 
     # location of USB wireless connection for Mac could be tty instead of
     # cu adress
     strPort = '/dev/cu.SLAB_USBtoUART'
+
     ser = serial.Serial(strPort, baudrate=9600, parity=serial.PARITY_NONE,
                         bytesize=serial.EIGHTBITS,
                         stopbits=serial.STOPBITS_ONE, timeout=1.0)
-    prev_data = [2]
+    # prev_data filled for the first time. Could be empty as well
+    prev_data = [0]
+
     while True:
         try:
-            data = ser.readline()
-            if data == '':  # check if data is not empty
-                time.sleep(2)  # change to higher sleep time
-                continue
-            data = [float(val) for val in data.split(',')]
-            if prev_data != data and len(data) <= 26:
-                prev_data = data
-                measurement = Measurement(data)
-                # print measurement.dew_point
-                datastore.store_event(measurement)
-                time.sleep(1)    # can be changed to higher sleep time
+          data = ser.readline()
+          if data == '':  # check if data is not empty
+            time.sleep(2) # change to higher sleep time
+
+            continue
+          data = [float(val) for val in data.split(',')]
+
+          if prev_data != data and len(data) <= 26:
+            prev_data = data
+
+            # Send data to class measurement
+            measurement = Measurement(data)
+
+            print measurement.dew_point
+            storage_manager.store_event(measurement)
+            time.sleep(1)    # can be changed to higher sleep time
+
         except KeyboardInterrupt:
             print ' exiting'
             break
