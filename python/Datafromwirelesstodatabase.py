@@ -15,7 +15,6 @@ from time import sleep
 from pysparc import storage
 from requests.exceptions import ConnectionError, Timeout
 
-logger = logging.getLogger(__name__)
 
 DATASTORE_URL = "http://frome.nikhef.nl/hisparc/upload"
 
@@ -92,28 +91,7 @@ class Measurement(object):
         return Tdew
 
 
-class NikhefDataStore(object):
-
-    """Send events over HTTP to the datastore at Nikhef.
-    A call to :meth:`store_event` will send the event to the datastore at
-    Nikhef, using the convoluted datastructure which was created for the
-    old eventwarehouse, and still survives to this day.
-    """
-
-    def __init__(self, station_id, password):
-        """Initialize the datastore.
-        Each station has a unique station number / password combination.
-        Provide this during initialization.
-        """
-        self.station_id = station_id
-        self.password = password
-
-    def store_event(self, event):
-        """Store an event.
-        Override this method.
-        """
-        data = self._create_event_container(event)
-        self._upload_data(data)
+class WeatherDataStore(storage.NikhefDataStore):
 
     def _create_event_container(self, event):
         """Encapsulate an event in a container for the datastore.
@@ -153,58 +131,13 @@ class NikhefDataStore(object):
         event_list = [{'header': header, 'datalist': datalist}]
         return event_list
 
-    def _add_value_to_datalist(self, datalist, upload_code, value):
-        """Add an event value to the datalist.
-        :param datalist: datalist object (for upload).
-        :param upload_code: the upload code (eg. 'TRIGPATTERN').
-        :param value: the value to store in the datalist.
-        """
-        datalist.append({'data_uploadcode': upload_code,
-                         'data': value})
-
-    def _add_values_to_datalist(self, datalist, upload_code, values):
-        """Add multiple event values to datalist.
-        Takes a list of values and a partial upload code (e.g. 'PH') and
-        adds them to the datalist as 'PH1', 'PH2', etc.
-        :param datalist: datalist object (for upload).
-        :param upload_code: the partial upload code (eg. 'PH').
-        :param values: list of values to store in the datalist.
-        """
-        for idx, value in enumerate(values, 1):
-            self._add_value_to_datalist(datalist, upload_code + str(idx),
-                                        value)
-
-    def _upload_data(self, data):
-        """Upload event data to server.
-        :param data: container for the event data.
-        """
-        pickled_data = pickle.dumps(data)
-        checksum = hashlib.md5(pickled_data).hexdigest()
-
-        payload = {'station_id': self.station_id,
-                   'password': self.password, 'data': pickled_data,
-                   'checksum': checksum}
-        try:
-            r = requests.post(DATASTORE_URL, data=payload, timeout=10)
-            r.raise_for_status()
-        except (ConnectionError, Timeout) as exc:
-            raise UploadError(str(exc))
-        else:
-            logger.debug("Response from server: %s", r.text)
-            if r.text != '100':
-                raise UploadError("Server responded with error code %s" %
-                                  r.text)
-
-    def close(self):
-        """Close the datastore."""
-
-        pass
-
 
 if __name__ == '__main__':
+    logging.basicConfig()
+
     # Send to NikhefDatastore(Station_id, password) not known please contact
     # info@hisparc.nl
-    datastore = NikhefDataStore(599, 'pysparc')
+    datastore = WeatherDataStore(599, 'pysparc')
     storage_manager = storage.StorageManager()
     storage_manager.add_datastore(datastore, 'queue_nikhef')
 
