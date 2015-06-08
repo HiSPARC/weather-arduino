@@ -153,23 +153,18 @@ if __name__ == '__main__':
 
     while True:
         try:
-          data = ser.readline()
-          if data == '':  # check if data is not empty
-            time.sleep(2) # change to higher sleep time
-
-            continue
-          data = [float(val) for val in data.split(',')]
-
-          if prev_data != data and len(data) <= 26:
-            prev_data = data
-
-            # Send data to class measurement
-            measurement = Measurement(data)
-
-            print measurement.dew_point
-            storage_manager.store_event(measurement)
-            time.sleep(1)    # can be changed to higher sleep time
-
+            data = ser.readline()
+            if data == '':  # check if data is not empty
+                time.sleep(2) # change to higher sleep time
+                continue
+            data = [float(val) for val in data.split(',')]
+            if prev_data != data and len(data) <= 26:
+                prev_data = data
+                # Send data to class measurement
+                measurement = Measurement(data)
+                print measurement.dew_point
+                storage_manager.store_event(measurement)
+                time.sleep(1)    # can be changed to higher sleep time
         except KeyboardInterrupt:
             print ' exiting'
             break
