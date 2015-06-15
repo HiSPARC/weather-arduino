@@ -60,8 +60,9 @@ void loop(void) {
   
   // check if returns are valid, if they are nan (not a number) then something went wrong!
   if (isnan(temperature) || isnan(humidity)) {
-    Serial.println("Failed to read from DHT");
-  } else {
+    continue;
+  } 
+  else {
     //Serial.print(dht.getStatusString());  // shows the status of the data read from the sensor
     //Serial.print("\t");
     Serial.print(temperature, 1); //Temperature outside

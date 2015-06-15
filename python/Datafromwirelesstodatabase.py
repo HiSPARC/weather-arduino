@@ -75,18 +75,23 @@ class Measurement(object):
         self.ext_timestamp = calendar.timegm(self.datetime.utctimetuple()) * 1000000000 + self.nanoseconds
 
     def dampdruk_calc(self, Tout, Hum_out, baro):
-        RH = Hum_out / 100  # calculate relative humidity
+        if Tout =='-999' and Hum_out =='-999':
+            Tdew = '-999'
 
-        # calculate vaporpressure, Dewpoint: Formula from Vantage Pro Davis
-        # instruments
-        # This document can be found at Github/HiSPARC/weather/doc/_static/
-        #                                               Parameter_Manual.pdf
+        else:
 
-        dampdruk = RH * 6.112 * numpy.exp((17.62 * Tout) / (Tout + 243.12))
-        Numerator = 243.12 * numpy.log(dampdruk) - 440.1
-        Denominator = 19.43 - numpy.log(dampdruk)
-        Tdew = Numerator / Denominator
-        Tdew = "%4.1f" % Tdew
+            RH = Hum_out / 100  # calculate relative humidity
+
+            # calculate vaporpressure, Dewpoint: Formula from Vantage Pro Davis
+            # instruments
+            # This document can be found at Github/HiSPARC/weather/doc/_static/
+            #                                               Parameter_Manual.pdf
+
+            dampdruk = RH * 6.112 * numpy.exp((17.62 * Tout) / (Tout + 243.12))
+            Numerator = 243.12 * numpy.log(dampdruk) - 440.1
+            Denominator = 19.43 - numpy.log(dampdruk)
+            Tdew = Numerator / Denominator
+            Tdew = "%4.1f" % Tdew
 
         return Tdew
 
@@ -135,13 +140,14 @@ class WeatherDataStore(storage.NikhefDataStore):
 if __name__ == '__main__':
     logging.basicConfig()
 
-    # Send to NikhefDatastore(Station_id, password) not known please contact
-    # info@hisparc.nl
-    datastore = WeatherDataStore(599, 'pysparc')
+    # Send to WeatherDatastore(Station_id, password) If Password not known please
+    # contact info@hisparc.nl.  vb datastore = WeatherDatastore(23, '12345678')
+
+    datastore = WeatherDataStore(station_nr, 'paswoord')
     storage_manager = storage.StorageManager()
     storage_manager.add_datastore(datastore, 'queue_nikhef')
 
-    # location of USB wireless connection for Mac could be tty instead of
+    # location of USB wireless connection for Windows could be tty instead of
     # cu adress
     strPort = '/dev/cu.SLAB_USBtoUART'
 
@@ -162,9 +168,12 @@ if __name__ == '__main__':
                 prev_data = data
                 # Send data to class measurement
                 measurement = Measurement(data)
+
+                # print for checking measurement; dew_point value between 0-10
                 print measurement.dew_point
                 storage_manager.store_event(measurement)
-                time.sleep(1)    # can be changed to higher sleep time
+                time.sleep(1)    # can be changed to higher sleep time in s.
+
         except KeyboardInterrupt:
             print ' exiting'
             break
