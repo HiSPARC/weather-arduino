@@ -1,19 +1,12 @@
 import serial
 import datetime
 import time
-import numpy
-import sys
-import time
-import hashlib
-import requests
 import logging
 import calendar
 
-import cPickle as pickle
+import numpy
 
-from time import sleep
 from pysparc import storage
-from requests.exceptions import ConnectionError, Timeout
 
 
 DATASTORE_URL = "http://frome.nikhef.nl/hisparc/upload"
@@ -72,10 +65,11 @@ class Measurement(object):
         # Add timetstamp of measurement
         self.datetime = datetime.datetime.now()
         self.nanoseconds = 0
-        self.ext_timestamp = calendar.timegm(self.datetime.utctimetuple()) * 1000000000 + self.nanoseconds
+        self.ext_timestamp = (calendar.timegm(self.datetime.utctimetuple()) *
+                              int(1e9) + self.nanoseconds)
 
     def dampdruk_calc(self, Tout, Hum_out, baro):
-        if Tout =='-999' and Hum_out =='-999':
+        if Tout == '-999' and Hum_out == '-999':
             Tdew = '-999'
 
         else:
@@ -84,8 +78,8 @@ class Measurement(object):
 
             # calculate vaporpressure, Dewpoint: Formula from Vantage Pro Davis
             # instruments
-            # This document can be found at Github/HiSPARC/weather/doc/_static/
-            #                                               Parameter_Manual.pdf
+            # This document can be found at:
+            # http://docs.hisparc.nl/weather/_static/Parameter_Manual.pdf
 
             dampdruk = RH * 6.112 * numpy.exp((17.62 * Tout) / (Tout + 243.12))
             Numerator = 243.12 * numpy.log(dampdruk) - 440.1
@@ -140,10 +134,11 @@ class WeatherDataStore(storage.NikhefDataStore):
 if __name__ == '__main__':
     logging.basicConfig()
 
-    # Send to WeatherDatastore(Station_id, password) If Password not known please
-    # contact info@hisparc.nl.  vb datastore = WeatherDatastore(23, '12345678')
+    # Send to WeatherDatastore(Station_id, password)
+    # If Password not known please contact info@hisparc.nl
+    # e.g. datastore = WeatherDatastore(23, '12345678')
+    datastore = WeatherDataStore(99, 'password')
 
-    datastore = WeatherDataStore(station_nr, 'paswoord')
     storage_manager = storage.StorageManager()
     storage_manager.add_datastore(datastore, 'queue_nikhef')
 
@@ -161,7 +156,7 @@ if __name__ == '__main__':
         try:
             data = ser.readline()
             if data == '':  # check if data is not empty
-                time.sleep(2) # change to higher sleep time
+                time.sleep(2)  # change to higher sleep time
                 continue
             data = [float(val) for val in data.split(',')]
             if prev_data != data and len(data) <= 26:
